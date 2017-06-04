@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+stdout=$(mktemp ~/tmp/vimscript-XXXXXX.out)
+
+debug=0
+doc=0
+filter=.
+while true
+do
+    case $1 in
+        --doc)  doc=1; shift;;
+        --keep) Lab42VimKeepStdout=1; shift;;
+        --debug) debug=1; shift;;
+        --trace) set -x; shift;;
+        --filter) filter=$2; shift; shift;;
+        -f) filter=$2; shift; shift;;
+        *)      break;;
+    esac
+done
+
+if test $# -eq 0
+then
+  set $(find test -name '*_test.vim')
+elif test $# -eq 1 && test -d $1
+then
+  set $(find $1 -name '*_test.vim')
+fi
+
+files=$(for file; do echo -n "'$file', "; done | sed 's/, $//')
+
+vim -nc ":call lab42#test#runner([$files], '$stdout', $debug, $doc, '$filter')"
+
+cat $stdout
+
+if test -n "$Lab42VimKeepStdout"
+then
+    echo "stdout is kept in $stdout"
+else
+    rm $stdout
+fi
