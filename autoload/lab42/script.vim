@@ -28,6 +28,6 @@ function! lab42#script#run(scriptfile, stdout)
     call Main()
   catch /.*/
     " Puts lab42#script#red(v:exception)
-    Puts lab42#script#red(v:exception)
+    lab42#uts lab42#script#red(v:exception)
   endtry
 endfunction

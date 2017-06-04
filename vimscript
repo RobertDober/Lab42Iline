@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+stdout=$(mktemp ~/tmp/vimscript-XXXXXX.out)
+
+quit_command=" | quit"
+while true
+do
+    case $1 in
+        --stay) quit_command=""; shift;;
+        --keep) Lab42VimKeepStdout=1; shift;;
+        *)      break;;
+    esac
+done
+
+vim -nc ":call lab42#script#run('$1', '$stdout')${quit_command}"
+
+cat $stdout
+
+if test -n "$Lab42VimKeepStdout"
+then
+    echo "stdout is kept in $stdout"
+else
+    rm $stdout
+fi

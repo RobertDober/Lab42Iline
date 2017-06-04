@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
-export session_name=Lab42Iline
-export home_dir=${Lab42Iline:-~/.vim/bundle/Lab42Iline}
+export session_name=Lab42VimBaseTools
+export home_dir=${Lab42VimBaseTools:-~/.vim/bundle/Lab42VimBaseTools}
 
 function main {
         new_session

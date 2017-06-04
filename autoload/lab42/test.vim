@@ -29,16 +29,16 @@ endfunction
 
 function! s:reportResults()
   call lab42#putl(s:messages) 
-  call Puts(s:yellow('--------------------------- Test Results  ---------------------------'))
+  call lab42#puts(s:yellow('--------------------------- Test Results  ---------------------------'))
   for l:msg in s:failures
-    call Puts(l:msg)
+    call lab42#puts(l:msg)
   endfor
-  call Puts("")
+  call lab42#puts("")
 
   if empty(s:failures)
-    call Puts( s:green('All passed ✔') . ' tests: ' . string(s:testcount) . ', assertions: ' . string(s:assertcount))
+    call lab42#puts( s:green('All passed ✔') . ' tests: ' . string(s:testcount) . ', assertions: ' . string(s:assertcount))
   else
-    call Puts( s:red( 'Failure ✗') . ' tests: ' . string(s:testcount) . ', assertions: ' . string(s:assertcount) . ', failures: ' . s:red(len(s:failures)))
+    call lab42#puts( s:red( 'Failure ✗') . ' tests: ' . string(s:testcount) . ', assertions: ' . string(s:assertcount) . ', failures: ' . s:red(len(s:failures)))
   endif
   call lab42#putl(s:dbgmessages)
 endfunction
