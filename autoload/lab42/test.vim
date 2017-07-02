@@ -67,7 +67,11 @@ function! lab42#test#assert_eq(expected, actual, ...)
 
   call s:increment_assertions()
 
-  if a:expected != a:actual
+  let l:etype = type(a:expected)
+  let l:atype = type(a:actual)
+  if l:etype != l:atype
+    call s:addFailure(printf(' expected type: %s, actual type: %s%s', s:green(string(l:etype)), s:red(string(l:atype)), l:msg))
+  elseif a:expected != a:actual
     call s:addFailure(printf(' expected: %s, actual: %s%s', s:green(string(a:expected)), s:red(string(a:actual)), l:msg))
   endif
 endfunction
