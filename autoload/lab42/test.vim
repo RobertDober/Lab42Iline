@@ -136,8 +136,19 @@ function! s:addFailure(msg)
   call add(s:failures, s:error . a:msg . l:location)
 endfunction
 
+function! s:cleanupTestFunction(_,testfnline)
+  return substitute(a:testfnline, '\v^\s*function!?\s+(.*)\(.*', '\1', '')
+endfunction
+
+function! s:filterTest(_,testname)
+  return a:testname == s:filter
+endfunction
+
 function! s:parseTests()
-  return filter(map(filter(getline(1, '$'), 'v:val =~ "^\s*function! Test"'), 'substitute(v:val, "\\v^\\s*function!\\s+", "", "")'), 'v:val =~ "' . s:filter . '"')
+  let l:testLines = filter(getline(1, '$'), 'v:val =~ "^\s*function! Test"')
+  let l:cleanedUp = map(l:testLines, function('s:cleanupTestFunction'))
+  let l:filtered  = filter(l:cleanedUp, function('s:filterTest'))
+  return l:filtered
 endfunction
 
 function! s:initTests()
@@ -153,7 +164,7 @@ endfunction
 function! s:wrap(test)
   let l:oldcount = s:errcount
   try
-    exec 'call ' . a:test
+    exec 'call ' . a:test . '()'
   catch /.*/
     call s:document('   ' .  s:blue(s:currtest) . ' ' . s:red('✗'))
     call s:addFailure(s:red(' Exception ') . s:yellow( v:exception) . ' ' . v:throwpoint)
@@ -175,7 +186,7 @@ function! lab42#test#from_file(file)
   for l:test in l:tests
     let s:testcount += 1
     let s:localassertcount = 0
-    let s:currtest = substitute(l:test, '()$', '', '')
+    let s:currtest = substitute(l:test, '()\s*".*$', '', '')
     call s:wrap(l:test)
   endfor
 endfunction

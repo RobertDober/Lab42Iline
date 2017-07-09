@@ -8,6 +8,7 @@ filter=.
 while true
 do
     case $1 in
+        --version) echo '1.0.1 (Peter)'; exit;;
         --doc)  doc=1; shift;;
         --keep) Lab42VimKeepStdout=1; shift;;
         --debug) debug=1; shift;;
