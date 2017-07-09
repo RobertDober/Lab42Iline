@@ -141,13 +141,13 @@ function! s:cleanupTestFunction(_,testfnline)
 endfunction
 
 function! s:filterTest(_,testname)
-  return a:testname == s:filter
+  return a:testname =~ '^' . s:filter . '$'
 endfunction
 
 function! s:parseTests()
   let l:testLines = filter(getline(1, '$'), 'v:val =~ "^\s*function! Test"')
-  let l:cleanedUp = map(l:testLines, function('s:cleanupTestFunction'))
-  let l:filtered  = filter(l:cleanedUp, function('s:filterTest'))
+  let l:filtered  = map(l:testLines, function('s:cleanupTestFunction'))
+  let l:filtered  = filter(l:filtered, function('s:filterTest'))
   return l:filtered
 endfunction
 
@@ -194,7 +194,7 @@ endfunction
 function! lab42#test#runner(files, stdout, ...)
   let l:debug  = 0
   let s:doc    = 0
-  let s:filter = '.'
+  let s:filter = '.*'
   if a:0 > 0
     let l:debug = a:1
   endif
