@@ -201,6 +201,27 @@ function! lab42#fn#map_filter(list, funexp)
 endfunction
 " }}}}
 
+"def map_with_index {{{{
+" map_with_index xs, f, start:0 inc:1 = foldl xs [[], start] (partial f' inc f) |> head where
+" f' inc f [l, i] x = [l ++ ( f x i ), i+inc]
+function! s:map_with_index_prime(inc, funexp, acc, ele)
+  let [l:l, l:i] = a:acc
+  let l:next = call(a:funexp, [a:ele, l:i])
+  return [add(l:l, l:next), l:i + a:inc] 
+endfunction
+function! lab42#fn#map_with_index(list, funexp, ...)
+  let l:start = 0
+  let l:inc   = 1
+  if a:0 > 1
+    let l:inc = a:2
+  endif
+  if a:0 > 0
+    let l:start = a:1
+  endif
+  return lab42#fn#foldl(a:list, [[], l:start], function('s:map_with_index_prime', [l:inc, a:funexp]))[0]
+endfunction
+
+" }}}}
 " def scan {{{{
 function! lab42#fn#scan(list, funexp, ...)
   let l:list = a:list
@@ -211,8 +232,41 @@ function! lab42#fn#scan(list, funexp, ...)
   else
     return s:scan1(l:list, a:funexp, l:list[0])
   endif
+endfunction " }}}}
+
+" def with_index {{{{
+" with_index xs start:0 inc:1 = (foldl xs [[], start] (partial f' inc))[0] where
+" f' inc [l, i] x = [l ++ x, i+inc]
+function! s:with_index_prime(inc, acc, ele)
+  let [l:l, l:i] = a:acc
+  return [add(l:l, [a:ele, l:i]), l:i + a:inc] 
 endfunction
-" }}}}
+function! lab42#fn#with_index(list,...)
+  let l:start = 0
+  let l:inc   = 1
+  if a:0 > 1
+    let l:inc = a:2
+  endif
+  if a:0 > 0
+    let l:start = a:1
+  endif
+  return lab42#fn#foldl(a:list, [[], l:start], function('s:with_index_prime', [l:inc]))[0]
+endfunction " }}}}
+
+" def zip *lists {{{{
+" zip heads &rest = map_with_index heads (partial zip' rest) where
+" zip' others ele idx = [ele (map others (partial ele idx))] where
+" ele idx list = list[idx]
+function! s:ele(idx, list)
+  return a:list[a:idx]
+endfunction
+function! s:zip_prime(others, ele, idx)
+  return insert(lab42#fn#map(a:others, function('s:ele', [a:idx])), a:ele)
+endfunction
+function! lab42#fn#zip(list, ...)
+  let l:rest = copy(a:000)
+  return lab42#fn#map_with_index(a:list, function('s:zip_prime', [l:rest]))
+endfunction " }}}}
 
 " def zip_with {{{{
 " zip_with l f = map l (partial f' f) where
