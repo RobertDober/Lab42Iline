@@ -4,6 +4,14 @@
 function! lab42#fn#nullFn()
 endfunction
 
+" Consts {{{{
+function! lab42#fn#false(...)
+  return 0
+endfunction
+function! lab42#fn#true(...)
+  return 1
+endfunction
+" }}}}
 " Ints {{{{
 function! s:adderImpl(...)
   let l:result = 0
