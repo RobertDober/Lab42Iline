@@ -35,8 +35,29 @@ function! lab42#fn#inc(...)
   endif
   return function('s:adderImpl', [l:increment])
 endfunction
+
+function! s:multiply(rhs, lhs)
+  return a:lhs * a:rhs
+endfunction
+function! lab42#fn#mult_fn(rhs)
+  return funcref('s:multiply', [a:rhs])
+endfunction
 " }}}}
 "
+" Comparers {{{{
+function! s:less_than(rhs, lhs)
+  return a:lhs < a:rhs
+endfunction
+function! lab42#fn#less_fn(rhs)
+  return funcref('s:less_than', [a:rhs])
+endfunction
+function! s:greater_than(rhs, lhs)
+  return a:lhs > a:rhs
+endfunction
+function! lab42#fn#greater_fn(rhs)
+  return funcref('s:greater_than', [a:rhs])
+endfunction
+" }}}}
 " Strings {{{{
 function! s:substituter_prime(str, pat, with, opts)
   return substitute(a:str, a:pat, a:with, a:opts)
