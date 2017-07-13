@@ -8,11 +8,24 @@ endfunction
 function! lab42#fn#false(...)
   return 0
 endfunction
+function! lab42#fn#false_fn()
+  return funcref('lab42#fn#false')
+endfunction
 function! lab42#fn#true(...)
   return 1
 endfunction
+function! lab42#fn#true_fn()
+  return funcref('lab42#fn#true')
+endfunction
+function! lab42#fn#identity(anything)
+  return a:anything
+endfunction
+function! lab42#fn#id_fn()
+  return funcref('lab42#fn#identity')
+endfunction
 " }}}}
 " Ints {{{{
+" Operations {{{{{
 function! s:adderImpl(...)
   let l:result = 0
   for l:term in copy(a:000)
@@ -42,9 +55,21 @@ endfunction
 function! lab42#fn#mult_fn(rhs)
   return funcref('s:multiply', [a:rhs])
 endfunction
-" }}}}
-"
-" Comparers {{{{
+" Predicates {{{{{
+function! lab42#fn#even(n)
+  return a:n % 2 == 0
+endfunction
+function! lab42#fn#even_fn()
+  return funcref('lab42#fn#even')
+endfunction
+function! lab42#fn#odd(n)
+  return a:n % 2 == 1
+endfunction
+function! lab42#fn#odd_fn()
+  return funcref('lab42#fn#odd')
+endfunction
+" }}}}}
+" Comparers {{{{{
 function! s:less_than(rhs, lhs)
   return a:lhs < a:rhs
 endfunction
@@ -57,6 +82,7 @@ endfunction
 function! lab42#fn#greater_fn(rhs)
   return funcref('s:greater_than', [a:rhs])
 endfunction
+" }}}}}
 " }}}}
 " Strings {{{{
 function! s:substituter_prime(str, pat, with, opts)
