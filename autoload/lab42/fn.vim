@@ -40,6 +40,9 @@ function! lab42#fn#adder()
   endif
   return s:adder
 endfunction
+function! lab42#fn#add_fn()
+  return lab42#fn#adder()
+endfunction
 
 function! lab42#fn#inc(...)
   let l:increment = 1
@@ -54,6 +57,18 @@ function! s:multiply(rhs, lhs)
 endfunction
 function! lab42#fn#mult_fn(rhs)
   return funcref('s:multiply', [a:rhs])
+endfunction
+function! s:subtract(lhs, rhs)
+  return a:lhs - a:rhs
+endfunction
+function! lab42#fn#sub_fn(...)
+  return funcref('s:subtract', copy(a:000))
+endfunction
+function! s:rev_subtract(rhs, lhs)
+  return a:lhs - a:rhs
+endfunction
+function! lab42#fn#rev_sub_fn(...)
+  return funcref('s:rev_subtract', copy(a:000))
 endfunction
 " Predicates {{{{{
 function! lab42#fn#even(n)
@@ -97,6 +112,11 @@ function! lab42#fn#substituter(pattern, with, ...)
 endfunction
 " }}}}
 " }}}
+" Lists {{{{
+function! lab42#fn#make_list(...)
+  return copy(a:000)
+endfunction
+" }}}}
 " Helpers {{{
 " Functional Helpers {{{{
 function! lab42#fn#isfn(maybefn)

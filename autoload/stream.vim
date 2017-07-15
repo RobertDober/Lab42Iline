@@ -18,8 +18,8 @@ function! s:cycle_prime(current, original) " {{{{{
     let l:next = a:current.tail()
     return stream#cons(a:current.head(), funcref('s:cycle_prime', [l:next, a:original]))
   endif
-endfunction " }}}}}
-function! s:cycle(stream)  dict " {{{{{
+endfunction
+function! s:cycle(stream) dict
   if a:stream._empty
     return stream#empty()
   else
@@ -171,6 +171,20 @@ function! s:reject(stream, funref) dict
   endif
   return s:reject1(a:stream, a:funref)
 endfunction " }}}}}
+
+function! s:delayed_scan(delayed_tail, current_acc, accfun) " {{{{{
+  return a:delayed_tail().scan(a:current_acc, a:accfun)
+endfunction
+function! s:scan(stream, initial, accfun)
+  if a:stream._empty
+    return stream#empty()
+  endif
+  let l:acc_val = call(a:accfun, [a:initial, a:stream._head])
+  return stream#cons(l:acc_val, funcref('s:delayed_scan', [a:stream._tail, l:acc_val, a:accfun]))
+endfunction " }}}}}
+function! s:scan_with(_, initial, funref) dict " {{{{{
+  return stream#zip_streams(self.scan(a:initial, a:funref), self)
+endfunction " }}}}}
 " }}}}
 
 " Basic Functions {{{
@@ -203,7 +217,7 @@ function! stream#cons(head, tail) " {{{{{
   let l:wrapper = {}
   let l:methodnames = ['head', 'tail', 'delayed_tail', 'is_empty']
   let l:methodnames += ['all', 'cycle', 'drop', 'drop_until', 'drop_while']
-  let l:methodnames += ['map', 'filter', 'reject', 'take', 'take_until', 'take_while']
+  let l:methodnames += ['map', 'filter', 'reject', 'scan', 'scan_with', 'take', 'take_until', 'take_while']
   for l:funname in l:methodnames
     call extend(l:wrapper, {l:funname: funcref('s:' . l:funname, [l:object])})
   endfor
@@ -244,5 +258,22 @@ endfunction " }}}}}
 function! stream#const_stream(element) " {{{{{
   return stream#cons(a:element, funcref('stream#const_stream', [a:element])) 
 endfunction " }}}}}
+
+function! s:delayed_zip_streams(streams) " {{{{{
+  let l:tails = map(a:streams, 'v:val.tail()')
+  return call('stream#zip_streams', l:tails)
+endfunction " }}}}}
+function! s:zip_streams1(streams)
+  let l:heads = map(copy(a:streams), 'v:val.head()')
+  return stream#cons(l:heads, funcref('s:delayed_zip_streams', [a:streams]))
+endfunction
+function! stream#zip_streams(...)
+  let l:all     = copy(a:000)
+  if empty(filter(copy(l:all), 'v:val.is_empty()')) 
+    return call('s:zip_streams1', [l:all])
+  else
+    return stream#empty()
+  endif
+endfunction
 " }}}}
 " }}}
