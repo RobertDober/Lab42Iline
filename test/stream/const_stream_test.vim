@@ -8,5 +8,4 @@ function! TestConstStream()
       call lab42#test#assert_eq(repeat([1], l:y), l:ones.drop(l:x).take(l:y))
     endfor
   endfor
-
 endfunction

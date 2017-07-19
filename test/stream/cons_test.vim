@@ -16,3 +16,10 @@ function! TestInfiniteStream()
   call lab42#test#assert_eq(0, l:integers.tail().is_empty())
   call lab42#test#assert_eq(2, l:integers.tail().tail().head())
 endfunction
+
+function! TestDelayedCons()
+  let l:two = stream#cons(0, funcref('stream#cons', [1, stream#delayed_empty_stream()]))
+  call lab42#test#assert_eq([0, 1], l:two.all())
+endfunction
+
+

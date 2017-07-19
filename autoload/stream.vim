@@ -207,7 +207,18 @@ function! stream#make_empty()
 endfunction
 " }}}}
 
-" Construction {{{{
+" Construction {{{
+" ================
+" Lazy Helpers {{{{
+" -----------------
+" As we **alwyas** need to delay the second parameter of `stream#cons` a bunch of
+" helpers are convenient.
+" Delayed Empty Stream {{{{{
+function! stream#delayed_empty_stream()
+  return funcref('stream#empty')
+endfunction
+" }}}}}
+" }}}}
 function! stream#cons(head, tail) " {{{{{
   if type(a:tail) == 0 " number
     let l:object =  {'_head': a:head, '_tail': 0, '_empty': 1}
@@ -255,6 +266,10 @@ function! stream#combine(...)
   endif
 endfunction " }}}}}
 
+function! stream#add_streams(s1, s2)
+  return stream#combine(lab42#fn#adder(), a:s1, a:s2)
+endfunction
+
 function! stream#const_stream(element) " {{{{{
   return stream#cons(a:element, funcref('stream#const_stream', [a:element])) 
 endfunction " }}}}}
@@ -275,5 +290,4 @@ function! stream#zip_streams(...)
     return stream#empty()
   endif
 endfunction
-" }}}}
 " }}}
