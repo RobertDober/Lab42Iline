@@ -22,7 +22,6 @@ function! s:parse_up_to_prime(pushers, poppers, acc, ele)
   endif
   let l:increment = ( index(a:pushers, a:ele) >= 0 ? 1 : 0)
   let l:increment = ( index(a:poppers, a:ele) >= 0 ? -1 : l:increment)
-  "call lab42#test#dbg('ele = %s, inc = %d, count = %d, result = %s', a:ele, l:increment, l:count, l:result)
   return [l:result . a:ele, l:count + l:increment]
 endfunction
 function! s:parse_up_to(charlist, pushers, poppers)

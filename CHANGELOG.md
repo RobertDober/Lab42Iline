@@ -1,4 +1,4 @@
-# VimBaseTools v1.0.4 (Peter)
+# VimBaseTools v1.0.5 (Peter)
 
 2017-08-02 v1.0.5 adding lab42#parse
 2017-07-19 v1.0.4 more streams
