@@ -6,7 +6,7 @@
 
 Slimming down
 
-* Remove stream, and lab42#rgx
+* Remove stream, lab42#str and lab42#rgx
 
 ## v1.0 (Peter)
 2017-08-02 v1.0.5 adding lab42#parse

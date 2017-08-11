@@ -186,27 +186,3 @@ function! lab42#mkdirif(dirname)
   endif
 endfunction
 "  }}}
-
-" -----------------------------------------------------------------------
-"  Misc {{{
-function! lab42#init_global_var(name, value)
-  if ! exists(a:name)
-    exe 'let ' . a:name . ' = "' . a:value . '"'
-  endif
-endfunction
-"  }}}
-"
-function! s:source_module(mod)
-  let l:mod = lab42#str#assure_suffix(a:mod, '.vim', '\.vim')
-  if file_readable(a:mod)
-    exe 'source ' . l:mod
-  else
-    echoerr 'source ' . l:mod . ' not found'
-  endif
-endfunction
-function! lab42#source(...)
-  let l:modules = copy(a:000)
-  let l:files   = lab42#fn#map(l:modules, function('lab42#modules#path'))
-  let l:source_files = lab42#fn#map(l:files, lab42#fn#substituter('/autoload/', '/imports/'))
-  call lab42#fn#map(l:source_files, function('s:source_module'))
-endfunction
