@@ -2,11 +2,10 @@
 
 ## v1.1 (Wendy)
 
-### v1.1.0 2017-08-11 
+### v1.1.0 
 
-Slimming down
-
-* Remove stream, lab42#str and lab42#rgx
+* 2017-08-26 lab42#fn#foldl_with_index, lab42#fn#foldln, lab42#fn#mapn
+* 2017-08-11 Remove stream, lab42#str and lab42#rgx
 
 ## v1.0 (Peter)
 2017-08-02 v1.0.5 adding lab42#parse

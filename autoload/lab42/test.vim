@@ -57,7 +57,7 @@ function! lab42#test#dbg(...)
 endfunction
 
 function! lab42#test#dbg_many(...)
-  return lab42#fn#each(copy(a:000), function('lab42#test#dbg', []))
+  return lab42#fn#map(copy(a:000), function('lab42#test#dbg', []))
 endfunction
 
 " -------------------------------------------------------------------------------------------------------------------------

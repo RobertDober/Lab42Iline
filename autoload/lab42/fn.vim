@@ -251,7 +251,47 @@ function! lab42#fn#foldl(list, acc, funexp)
   return l:result
 endfunction
 " }}}}
+" def foldl_with_index {{{{
+" foldl_with_index l a f =
+"   foldl l [a, 0] (partial f' f) where
+"   f' f'' [a', i] e = [(f a [e, i]), i + 1]
+function! s:foldl_with_index_prime(original_f, acc, ele) "  ==  f'
+  let [l:acc, l:idx] = a:acc
+  let l:new_acc = call(a:original_f, [l:acc, [a:ele, l:idx]])
+  return [l:new_acc, l:idx+1]
+endfunction
+function! lab42#fn#foldl_with_index(list, acc, funexp)
+  return lab42#fn#foldl(a:list, [a:acc, 0], function('s:foldl_with_index_prime', [a:funexp]))[0]
+endfunction
+" }}}}
 
+" def foldln {{{{
+function! lab42#fn#foldln(list, n, acc, funexp, ...)
+  let l:filler = 0
+  if a:0 > 0
+    let l:filler = a:1
+  endif
+  let l:count  = a:n
+  let l:tail   = a:list
+  let l:result = a:acc
+
+  while 1
+    let l:head = l:tail[0:a:n - 1]
+    let l:tail = l:tail[a:n:]
+    if len(l:head) < a:n
+      call extend(l:head, repeat([l:filler], a:n - len(l:head)))
+    endif
+    let l:result = call(a:funexp, [l:result, l:head])
+    if empty(l:tail)
+      return l:result
+    endif
+  endwhile
+endfunction
+
+function! lab42#fn#foldl_with_index(list, acc, funexp)
+  return lab42#fn#foldl(a:list, [a:acc, 0], function('s:foldl_with_index_prime', [a:funexp]))[0]
+endfunction
+" }}}}
 " def map {{{{
 " map l f = foldl l [] (partial f' f) where
 " f' f'' acc ele = acc ++ (f'' ele)
@@ -263,6 +303,23 @@ function! s:map_prime(mapfun, acc, ele)
 endfunction
 function! lab42#fn#map(list, funexp)
   return lab42#fn#foldl(a:list, [], function('s:map_prime', [a:funexp]))
+endfunction
+" }}}}
+
+" def mapn {{{{ {{{
+" mapn l n f filler?0 =
+"   foldln l n [] (f' f) filler where
+"   f' f acc tuple =
+"      acc ++ (apply f tuple)
+function! s:mapn_prime(funexp, acc, tuple) " --> f'
+  return add(a:acc, call(a:funexp, a:tuple))
+endfunction
+function! lab42#fn#mapn(list, n, funexp, ...)
+  let l:filler = 0
+  if a:0 > 0
+    let l:filler = a:1
+  endif
+  return lab42#fn#foldln(a:list, a:n, [], function('s:mapn_prime', [a:funexp]), l:filler)
 endfunction
 " }}}}
 
