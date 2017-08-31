@@ -151,24 +151,16 @@ endfunction
 "----------------------------------------------------------------------------
 " High Order Functions {{{
 " Memoization {{{{
-
-let s:function_memo = {}
-function! s:memoize_function(fn)
-  let l:repr = string(a:fn)
-  let l:memo = s:function_memo[l:repr]
-  let l:count = string(l:memo['count'])
-  if !has_key(l:memo['values'], l:count)
-    let l:memo['values'][l:count] = call(a:fn, [])
+function! s:memfun(funexp) dict
+  if ! self.invoked
+    let self.invoked = 1
+    let self.result = a:funexp()
   endif
-  return l:memo['values'][l:count]
+  return self.result
 endfunction
+
 function! lab42#fn#memfun(funexp)
-  let l:repr     = string(a:funexp)
-  if !has_key(s:function_memo, l:repr)
-    let s:function_memo[l:repr] = {'count': 0, 'values': {}}
-  endif
-  let s:function_memo[l:repr]['count'] += 1
-  return function('s:memoize_function', [a:funexp])
+  return function('s:memfun', [a:funexp], {'invoked': 0})
 endfunction
 " }}}}
 
@@ -225,6 +217,20 @@ function! lab42#fn#filter(list, funexp)
   return lab42#fn#foldl(a:list, [], l:Partial)
 endfunction
 " }}}}
+"
+
+" def find {{{{
+" find l f =
+"   foldwhile l 0 (partial f' f)
+" where f' f _ ele = f ele
+" }}}}
+function! s:find_prime(funexp, _acc, ele)
+  return call(a:funexp,[a:ele])
+endfunction
+function! lab42#fn#find(list, funexp)
+  return lab42#fn#foldwhile(a:list, 0, function('s:find_prime', [a:funexp]))
+endfunction
+
 
 " def flatmap {{{{
 " flatmap l f = foldl l [] (partial f' f) where
@@ -265,6 +271,19 @@ function! lab42#fn#foldl_with_index(list, acc, funexp)
 endfunction
 " }}}}
 
+" def foldwhile {{{{
+function! lab42#fn#foldwhile(list, acc, funexp)
+  let l:result = 0 
+  let l:val    = a:acc
+  for l:ele in a:list
+    let [l:found, l:val] = a:funexp(l:val, l:ele)
+    if l:found
+      return l:val
+    endif
+  endfor
+  return l:result
+endfunction
+" }}}}
 " def foldln {{{{
 function! lab42#fn#foldln(list, n, acc, funexp, ...)
   let l:filler = 0

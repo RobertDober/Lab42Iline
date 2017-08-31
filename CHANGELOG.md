@@ -4,6 +4,7 @@
 
 ### v1.1.0 
 
+* 2017-08-31 lab42#fn#foldwhile, lab42#fn#fin_d, lab42#data#some/none
 * 2017-08-26 lab42#fn#foldl_with_index, lab42#fn#foldln, lab42#fn#mapn
 * 2017-08-11 Remove stream, lab42#str and lab42#rgx
 
