@@ -4,6 +4,7 @@ stdout=$(mktemp ~/tmp/vimscript-XXXXXX.out)
 
 debug=0
 doc=0
+silent=0
 filter='.*'
 while true
 do
@@ -14,6 +15,7 @@ do
         --debug) debug=1; shift;;
         --trace) set -x; shift;;
         --filter) filter=$2; shift; shift;;
+        --silent) silent=1; shift;;
         -f) filter=$2; shift; shift;;
         *)      break;;
     esac
@@ -29,7 +31,7 @@ fi
 
 files=$(for file; do echo -n "'$file', "; done | sed 's/, $//')
 
-vim -nc ":call lab42#test#runner([$files], '$stdout', $debug, $doc, '$filter')"
+vim -nc ":call lab42#test#runner([$files], '$stdout', $debug, $doc, '$filter', $silent)"
 
 cat $stdout
 

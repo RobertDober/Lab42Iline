@@ -6,11 +6,11 @@ function! s:blue(str)
 endfunction
 
 function! s:green(str)
-  return lab42#script#green(a:str)
+  return lab42#script#green(string(a:str))
 endfunction
 
 function! s:red(str)
-  return lab42#script#red(a:str)
+  return lab42#script#red(string(a:str))
 endfunction
 
 function! s:yellow(str)
@@ -28,7 +28,7 @@ function! s:document(str)
 endfunction
 
 function! s:reportResults()
-  call lab42#putl(s:messages) 
+  call lab42#putl(s:messages)
   call lab42#puts(s:yellow('--------------------------- Test Results  ---------------------------'))
   for l:msg in s:failures
     call lab42#puts(l:msg)
@@ -45,6 +45,9 @@ endfunction
 
 " available to tested libraries, it will add output to debug_messages
 function! lab42#test#dbg(...)
+  if s:silent
+    return
+  endif
   let l:msg = 'DBG AUTO MARKER: ----------------------------------------------------> Debugging'
   if a:0 > 0
     let l:msg = a:1
@@ -80,6 +83,28 @@ function! lab42#test#assert_eq(expected, actual, ...)
   endif
 endfunction
 
+function! lab42#test#assert_near(expected, actual, ...)
+  let l:msg = ''
+  let l:exp_delta = 0.000001
+  if a:0 > 0
+    let l:exp_delta = a:1
+  endif
+  if a:0 > 1
+    let l:msg = s:yellow(" «" . a:2 . "»")
+  endif
+
+  call s:increment_assertions()
+
+  let l:etype = type(a:expected)
+  let l:atype = type(a:actual)
+  if l:etype != l:atype
+    return s:addFailure(printf(' expected type: %s, actual type: %s%s', s:green(string(l:etype)), s:red(string(l:atype)), l:msg))
+  endif
+  let l:act_delta = abs(a:expected - a:actual)
+  if l:act_delta > l:exp_delta
+    call s:addFailure(printf(' expected: %s to be close to %s (delta: %s) but delta was %s %s', s:red(a:actual), s:green(a:expected), s:green(l:exp_delta), s:red(l:act_delta), l:msg))
+  endif
+endfunction
 function! lab42#test#assert_false(expression, ...)
   let l:msg = ''
   if a:0 > 0
@@ -199,6 +224,7 @@ function! lab42#test#runner(files, stdout, ...)
   let l:debug  = 0
   let s:doc    = 0
   let s:filter = '.*'
+  let s:silent = 0
   if a:0 > 0
     let l:debug = a:1
   endif
@@ -207,6 +233,9 @@ function! lab42#test#runner(files, stdout, ...)
   endif
   if a:0 > 2
     let s:filter = a:3
+  endif
+  if a:0 > 3
+    let s:silent = a:4
   endif
 
   call lab42#stdout(a:stdout)

@@ -1,3 +1,7 @@
+if exists('g:lab42_fn_autoloaded')
+  finish
+endif
+let g:lab42_fn_autoloaded = 1
 "----------------------------------------------------------------------------
 " Predefined Fns {{{
 
@@ -220,16 +224,19 @@ endfunction
 "
 
 " def find {{{{
-" find l f =
-"   foldwhile l 0 (partial f' f)
-" where f' f _ ele = f ele
-" }}}}
 function! s:find_prime(funexp, _acc, ele)
   return call(a:funexp,[a:ele])
 endfunction
 function! lab42#fn#find(list, funexp)
-  return lab42#fn#foldwhile(a:list, 0, function('s:find_prime', [a:funexp]))
+  for l:ele in a:list
+    let l:val = call(a:funexp, [l:ele])
+    if l:val.some()
+      return l:val
+    endif
+  endfor
+  return lab42#data#none()
 endfunction
+" }}}}
 
 
 " def flatmap {{{{
@@ -271,19 +278,6 @@ function! lab42#fn#foldl_with_index(list, acc, funexp)
 endfunction
 " }}}}
 
-" def foldwhile {{{{
-function! lab42#fn#foldwhile(list, acc, funexp)
-  let l:result = 0 
-  let l:val    = a:acc
-  for l:ele in a:list
-    let [l:found, l:val] = a:funexp(l:val, l:ele)
-    if l:found
-      return l:val
-    endif
-  endfor
-  return l:result
-endfunction
-" }}}}
 " def foldln {{{{
 function! lab42#fn#foldln(list, n, acc, funexp, ...)
   let l:filler = 0

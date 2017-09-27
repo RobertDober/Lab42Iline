@@ -1,3 +1,7 @@
+if exists('g:lab42_data_autoloaded')
+  finish
+endif
+let g:lab42_data_autoloaded = 1
 " mr"myiw^c$function! s:m(internal)return a:internal._mendfunction/%add accessor%yypkc$let l:methodnames += ['m']^'r 
 " Accessors {{{
 function! s:some(internal)
@@ -12,12 +16,12 @@ endfunction
 " }}}
 " Construction {{{
 function! lab42#data#none()
-  return s:constructor(0,0)
+  return lab42#data#option(0,0)
 endfunction
 function! lab42#data#some(val)
-  return s:constructor(1, a:val)
+  return lab42#data#option(1, a:val)
 endfunction
-function! s:constructor(some, val)
+function! lab42#data#option(some, val)
   let l:wrapper = {}
   let l:object  = {'__wrapper': l:wrapper, '_some': a:some, '_val': a:val} 
 
