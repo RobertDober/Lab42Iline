@@ -4,6 +4,7 @@
 
 ### v1.1.0 
 
+* 2017-10-01 lab42#fn#empty_fn and lab42#fn#reject
 * 2017-09-27 Redesign of memfun, some data types (option and struct-experimental)
 * 2017-09-02 lab42#fn#assert_near
 * 2017-08-31 lab42#fn#foldwhile, lab42#fn#fin_d, lab42#data#some/none

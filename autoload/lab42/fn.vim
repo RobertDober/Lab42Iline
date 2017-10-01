@@ -9,6 +9,12 @@ function! lab42#fn#nullFn()
 endfunction
 
 " Consts {{{{
+function! lab42#fn#empty(x)
+  return empty(a:x)
+endfunction
+function! lab42#fn#empty_fn()
+  return funcref('lab42#fn#empty')
+endfunction
 function! lab42#fn#false(...)
   return 0
 endfunction
@@ -222,6 +228,21 @@ function! lab42#fn#filter(list, funexp)
 endfunction
 " }}}}
 "
+" def reject {{{{
+" reject l f = folfl l [] (partial f' f) where
+" f' f'' acc ele = if f'' ele then acc else acc ++ ele end
+" }}}}
+function! s:reject_prime(funexp, acc, ele)
+  if call(a:funexp, [a:ele])
+    return a:acc
+  else
+    return add(a:acc, a:ele)
+  endif
+endfunction
+function! lab42#fn#reject(list, funexp)
+  let l:Partial = function('s:reject_prime', [a:funexp])
+  return lab42#fn#foldl(a:list, [], l:Partial)
+endfunction
 
 " def find {{{{
 function! s:find_prime(funexp, _acc, ele)

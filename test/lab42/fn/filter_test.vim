@@ -13,5 +13,12 @@ function! TestSimpleFilter()
   let l:result   = lab42#fn#filter(l:list, s:matches('i'))
   let l:expected = ['quick']
   call lab42#test#assert_eq(l:expected, l:result)
+endfunction
 
+function! TestSimpleReject()
+  let l:list     = ['the', '', 'quick', '', 'brown']
+  let l:expected = ['the', 'quick', 'brown']
+
+  let l:result   = lab42#fn#reject(l:list, lab42#fn#empty_fn())
+  call lab42#test#assert_eq(l:expected, l:result)
 endfunction
