@@ -226,6 +226,18 @@ function! lab42#fn#filter(list, funexp)
   let l:Partial = function('s:filter_prime', [a:funexp])
   return lab42#fn#foldl(a:list, [], l:Partial)
 endfunction
+function! lab42#fn#filter_with_index(list, funexp, ...)
+  let l:start = 0
+  let l:incr  = 1
+  if a:0 > 0
+    let l:start = a:1
+  endif
+  if a:0 > 1
+    let l:incr = a:2
+  endif
+  let l:Partial = function('s:filter_prime', [a:funexp])
+  return lab42#fn#foldl_with_index(a:list, [], l:Partial, l:start, l:incr)
+endfunction
 " }}}}
 "
 " def reject {{{{
@@ -243,7 +255,18 @@ function! lab42#fn#reject(list, funexp)
   let l:Partial = function('s:reject_prime', [a:funexp])
   return lab42#fn#foldl(a:list, [], l:Partial)
 endfunction
-
+function! lab42#fn#reject_with_index(list, funexp, ...)
+  let l:start = 0
+  let l:incr  = 1
+  if a:0 > 0
+    let l:start = a:1
+  endif
+  if a:0 > 1
+    let l:incr = a:2
+  endif
+  let l:Partial = function('s:reject_prime', [a:funexp])
+  return lab42#fn#foldl_with_index(a:list, [], l:Partial, l:start, l:incr)
+endfunction
 " def find {{{{
 function! s:find_prime(funexp, _acc, ele)
   return call(a:funexp,[a:ele])
@@ -289,13 +312,21 @@ endfunction
 " foldl_with_index l a f =
 "   foldl l [a, 0] (partial f' f) where
 "   f' f'' [a', i] e = [(f a [e, i]), i + 1]
-function! s:foldl_with_index_prime(original_f, acc, ele) "  ==  f'
+function! s:foldl_with_index_prime(incr, original_f, acc, ele) "  ==  f'
   let [l:acc, l:idx] = a:acc
   let l:new_acc = call(a:original_f, [l:acc, [a:ele, l:idx]])
-  return [l:new_acc, l:idx+1]
+  return [l:new_acc, l:idx+a:incr]
 endfunction
-function! lab42#fn#foldl_with_index(list, acc, funexp)
-  return lab42#fn#foldl(a:list, [a:acc, 0], function('s:foldl_with_index_prime', [a:funexp]))[0]
+function! lab42#fn#foldl_with_index(list, acc, funexp, ...)
+  let l:start = 0
+  let l:incr  = 1
+  if a:0 > 0
+    let l:start = a:1
+  endif
+  if a:0 > 1
+    let l:incr = a:2
+  endif
+  return lab42#fn#foldl(a:list, [a:acc, l:start], function('s:foldl_with_index_prime', [l:incr, a:funexp]))[0]
 endfunction
 " }}}}
 
@@ -322,9 +353,6 @@ function! lab42#fn#foldln(list, n, acc, funexp, ...)
   endwhile
 endfunction
 
-function! lab42#fn#foldl_with_index(list, acc, funexp)
-  return lab42#fn#foldl(a:list, [a:acc, 0], function('s:foldl_with_index_prime', [a:funexp]))[0]
-endfunction
 " }}}}
 " def map {{{{
 " map l f = foldl l [] (partial f' f) where

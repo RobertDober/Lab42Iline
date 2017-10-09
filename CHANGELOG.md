@@ -1,6 +1,11 @@
-# VimBaseTools v1.1 (Wendy)
+# VimBaseTools v1.1.1 (Wendy)
 
 ## v1.1 (Wendy)
+
+### v1.1.1
+
+* 2017-10-09  lab42#fn#foldl_with_index (start and incr added) implemented also
+              lab42#fn#filter_with_index, lab42#fn#reject_with_index
 
 ### v1.1.0 
 

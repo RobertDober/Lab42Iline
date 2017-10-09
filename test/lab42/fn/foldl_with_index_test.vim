@@ -15,4 +15,9 @@ function! TestFoldlWithIndex()
   let l:scan_with_index = lab42#fn#foldl_with_index(range(2,4), [], function('s:scan'))
   call lab42#test#assert_eq([2, 0, 3, 1, 4, 2], l:scan_with_index)
 
+  let l:scan_with_index = lab42#fn#foldl_with_index(range(2,4), [], function('s:scan'), 1)
+  call lab42#test#assert_eq([2, 1, 3, 2, 4, 3], l:scan_with_index)
+
+  let l:scan_with_index = lab42#fn#foldl_with_index(range(2,4), [], function('s:scan'), 1, 2)
+  call lab42#test#assert_eq([2, 1, 3, 3, 4, 5], l:scan_with_index)
 endfunction
