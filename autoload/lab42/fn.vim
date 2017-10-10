@@ -120,6 +120,13 @@ function! lab42#fn#substituter(pattern, with, ...)
   endif
   return lab42#fn#partial_1('s:substituter_prime', '\v' . a:pattern, a:with, l:options)
 endfunction
+
+function! s:matcher_prime(str, with)
+  return match(a:str, '\v' . a:with) >= 0
+endfunction
+function! lab42#fn#matcher(with)
+  return lab42#fn#partial_1('s:matcher_prime', a:with)
+endfunction
 " }}}}
 " }}}
 " Lists {{{{
