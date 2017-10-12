@@ -531,8 +531,6 @@ endfunction
 function! s:compose(funs, ...)
   let l:args = call(a:funs[0], copy(a:000))
   for l:Fun in a:funs[1:-1]
-    call lab42#test#dbg(l:Fun)
-    call lab42#test#dbg(l:args)
     let l:args = call(l:Fun, [l:args])
   endfor
   return l:args
