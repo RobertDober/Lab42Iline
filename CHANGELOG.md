@@ -5,6 +5,7 @@
 ### v1.1.1
 
 * 2017-10-12  lab42#fn#map_with_index1
+              Function Composition (fn#negate, fn#compose)
 * 2017-10-10  lab42#fn#matcher
 * 2017-10-09  lab42#fn#foldl_with_index (start and incr added) implemented also
               lab42#fn#filter_with_index, lab42#fn#reject_with_index

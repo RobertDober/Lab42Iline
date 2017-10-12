@@ -8,6 +8,7 @@ let g:lab42_fn_autoloaded = 1
 function! lab42#fn#nullFn()
 endfunction
 
+
 " Consts {{{{
 function! lab42#fn#empty(x)
   return empty(a:x)
@@ -34,14 +35,14 @@ function! lab42#fn#id_fn()
   return funcref('lab42#fn#identity')
 endfunction
 " }}}}
-" Lists {{{
-function! s:list_shorter_than(len, list)
-  return len(a:list) < a:len
+" Bools {{{{
+function! s:not(funexp, ...)
+  return !call(a:funexp, copy(a:000))
 endfunction
-function! lab42#fn#list_shorter_than_fn(len)
-  return funcref('s:list_shorter_than', [a:len])
+function! lab42#fn#negate(funexp)
+  return function('s:not', [a:funexp])
 endfunction
-" }}}
+" }}}}
 " Ints {{{{
 " Operations {{{{{
 function! s:adderImpl(...)
@@ -138,8 +139,23 @@ endfunction
 " }}}}
 " }}}
 " Lists {{{{
+function! lab42#fn#islist(maybelist)
+  return type(a:maybelist) == 3
+endfunction
 function! lab42#fn#make_list(...)
   return copy(a:000)
+endfunction
+function! s:list_shorter_than(len, list)
+  return len(a:list) < a:len
+endfunction
+function! lab42#fn#list_shorter_than_fn(len)
+  return funcref('s:list_shorter_than', [a:len])
+endfunction
+function! lab42#fn#get_ele(list, ele)
+  return get(a:list, a:ele)
+endfunction
+function! lab42#fn#get_ele_fn(ele)
+  return lab42#fn#partial_1(function('lab42#fn#get_ele'), a:ele)
 endfunction
 " }}}}
 " Helpers {{{
@@ -258,7 +274,6 @@ endfunction
 " def reject {{{{
 " reject l f = folfl l [] (partial f' f) where
 " f' f'' acc ele = if f'' ele then acc else acc ++ ele end
-" }}}}
 function! s:reject_prime(funexp, acc, ele)
   if call(a:funexp, [a:ele])
     return a:acc
@@ -282,6 +297,7 @@ function! lab42#fn#reject_with_index(list, funexp, ...)
   let l:Partial = function('s:reject_prime', [a:funexp])
   return lab42#fn#foldl_with_index(a:list, [], l:Partial, l:start, l:incr)
 endfunction
+" }}}}
 " def find {{{{
 function! s:find_prime(funexp, _acc, ele)
   return call(a:funexp,[a:ele])
@@ -302,7 +318,6 @@ endfunction
 " flatmap l f = foldl l [] (partial f' f) where
 " f' f'' acc ele = acc + fmapped where
 " fmapped = if (list (f'' ele)) (f'' ele) else [(f'' ele)]
-" }}}}
 function! s:flatmap_prime(mapfun, acc, ele)
   let l:map_ele = call(a:mapfun, [a:ele])
   if type(l:map_ele) == 3 " list
@@ -314,6 +329,7 @@ endfunction
 function! lab42#fn#flatmap(list, funexp)
   return lab42#fn#foldl(a:list, [], function('s:flatmap_prime', [a:funexp]))
 endfunction
+" }}}}
 " def foldl {{{{
 function! lab42#fn#foldl(list, acc, funexp)
   let l:result = a:acc
@@ -510,3 +526,18 @@ function! lab42#fn#zip_with(list, funexp)
 endfunction
 "}}}}
 " }}}
+"----------------------------------------------------------------------------
+"  Function Composition {{{
+function! s:compose(funs, ...)
+  let l:args = call(a:funs[0], copy(a:000))
+  for l:Fun in a:funs[1:-1]
+    call lab42#test#dbg(l:Fun)
+    call lab42#test#dbg(l:args)
+    let l:args = call(l:Fun, [l:args])
+  endfor
+  return l:args
+endfunction
+function! lab42#fn#compose(...)
+  return function('s:compose', [a:000])
+endfunction
+"  }}}

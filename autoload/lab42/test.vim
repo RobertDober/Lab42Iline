@@ -50,7 +50,7 @@ function! lab42#test#dbg(...)
   endif
   let l:msg = 'DBG AUTO MARKER: ----------------------------------------------------> Debugging'
   if a:0 > 0
-    let l:msg = a:1
+    let l:msg = string(a:1)
   endif
   if a:0 < 2
     call add(s:dbgmessages, s:yellow(l:msg))
