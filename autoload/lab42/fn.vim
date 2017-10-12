@@ -34,6 +34,14 @@ function! lab42#fn#id_fn()
   return funcref('lab42#fn#identity')
 endfunction
 " }}}}
+" Lists {{{
+function! s:list_shorter_than(len, list)
+  return len(a:list) < a:len
+endfunction
+function! lab42#fn#list_shorter_than_fn(len)
+  return funcref('s:list_shorter_than', [a:len])
+endfunction
+" }}}
 " Ints {{{{
 " Operations {{{{{
 function! s:adderImpl(...)
@@ -402,7 +410,7 @@ function! lab42#fn#map_filter(list, funexp)
 endfunction
 " }}}}
 
-"def map_with_index {{{{
+" def map_with_index {{{{
 " map_with_index xs, f, start:0 inc:1 = foldl xs [[], start] (partial f' inc f) |> head where
 " f' inc f [l, i] x = [l ++ ( f x i ), i+inc]
 function! s:map_with_index_prime(inc, funexp, acc, ele)
@@ -421,8 +429,30 @@ function! lab42#fn#map_with_index(list, funexp, ...)
   endif
   return lab42#fn#foldl(a:list, [[], l:start], function('s:map_with_index_prime', [l:inc, a:funexp]))[0]
 endfunction
-
 " }}}}
+
+" def map_with_index1 {{{{
+" map_with_index xs, f, start:0 inc:1 =
+"   foldl_with_index xs [] (partial f' f) where
+" f' f acc [x, i] = acc ++ [( f x, i ), i]
+function! s:map_with_index1_prime(funexp, acc, val_idx_pair)
+  let [_, l:idx] = a:val_idx_pair
+  let l:next = call(a:funexp, a:val_idx_pair)
+  return add(a:acc, [l:next, l:idx])
+endfunction
+function! lab42#fn#map_with_index1(list, funexp, ...)
+  let l:start = 0
+  let l:inc   = 1
+  if a:0 > 1
+    let l:inc = a:2
+  endif
+  if a:0 > 0
+    let l:start = a:1
+  endif
+  return lab42#fn#foldl_with_index(a:list, [], function('s:map_with_index1_prime', [a:funexp]), l:start, l:inc)
+endfunction
+" }}}}
+
 " def scan {{{{
 function! lab42#fn#scan(list, funexp, ...)
   let l:list = a:list

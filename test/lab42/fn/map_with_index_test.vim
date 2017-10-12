@@ -17,3 +17,13 @@ function! TestMapWithIndex()
   " indices are    [1, 4,  7, 10]
   call lab42#test#assert_eq(l:expected, l:result)
 endfunction
+
+function! TestMapWithIndex1()
+  let l:list     = range(4)
+
+  let l:result   = lab42#fn#map_with_index1(l:list, s:Double, 1, 3)
+  let l:expected = [[2, 1], [9, 4], [16, 7], [23, 10]]
+  " indices are    [    1,      4,       7,       10]
+  call lab42#test#assert_eq(l:expected, l:result)
+  
+endfunction
