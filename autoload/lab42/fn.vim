@@ -158,6 +158,30 @@ function! lab42#fn#get_ele_fn(ele)
   return lab42#fn#partial_1(function('lab42#fn#get_ele'), a:ele)
 endfunction
 " }}}}
+" Strings {{{{
+function! lab42#fn#substr(lc, rc, ...)
+  let l:str = a:1
+  let l:padding = ' '
+  if a:0 > 1
+    let l:padding = a:1
+    let l:str  = a:2
+  endif
+  let l:needed_len = a:rc - a:lc + 1
+  let l:result = strpart(l:str, a:lc - 1, l:needed_len)
+  let l:actual_len = len(l:result)
+  if l:actual_len < l:needed_len
+    let l:result .= repeat(l:padding, (l:needed_len - l:actual_len) / len(l:padding)) . l:padding
+  endif
+  return strpart(l:result, 0, l:needed_len)
+endfunction
+function! lab42#fn#substr_fn(lc, rc, ...)
+  let l:padding = ' '
+  if a:0
+    let l:padding = a:1
+  endif
+  return function('lab42#fn#substr', [a:lc, a:rc, l:padding])
+endfunction
+" }}}}
 " Helpers {{{
 " Functional Helpers {{{{
 function! lab42#fn#isfn(maybefn)

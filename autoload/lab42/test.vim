@@ -192,6 +192,9 @@ endfunction
 
 function! s:wrap(test)
   let l:oldcount = s:errcount
+  if !empty(s:buffer)
+    exec 'edit! ' . s:buffer
+  endif
   try
     exec 'call ' . a:test . '()'
   catch /.*/
@@ -205,6 +208,12 @@ function! s:wrap(test)
   end
 endfunction
 
+let s:buffer = ''
+" Instrumentation {{{{
+function! lab42#test#use_buffer(name) " {{{{{
+  let s:buffer = a:name
+endfunction " }}}}}
+" }}}}
 function! lab42#test#from_file(file)
   exec 'edit! ' . a:file
   let l:tests = s:parseTests()
@@ -246,7 +255,7 @@ function! lab42#test#runner(files, stdout, ...)
   endfor
   call s:reportResults()
   if !l:debug
-    quit
+    quit!
   else
     tabnew
     call setline("$", "Messages:")

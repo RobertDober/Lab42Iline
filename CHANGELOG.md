@@ -4,6 +4,7 @@
 
 ### v1.1.1
 
+* 2017-10-17  lab42#fn#substr, lab42#fn#substr_fn, lab42#test#use_buffer
 * 2017-10-12  lab42#fn#map_with_index1
               Function Composition (fn#negate, fn#compose)
 * 2017-10-10  lab42#fn#matcher
