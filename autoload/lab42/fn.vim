@@ -399,8 +399,8 @@ function! lab42#fn#map(list, funexp)
 endfunction
 " }}}}
 
-" def mapn {{{{ {{{
-" mapn l n f filler?0 =
+" def mapn {{{{
+" mapn l n f filler:0 =
 "   foldln l n [] (f' f) filler where
 "   f' f acc tuple =
 "      acc ++ (apply f tuple)
@@ -414,6 +414,10 @@ function! lab42#fn#mapn(list, n, funexp, ...)
   endif
   return lab42#fn#foldln(a:list, a:n, [], function('s:mapn_prime', [a:funexp]), l:filler)
 endfunction
+" }}}}
+
+" def mapmany {{{{
+" mapmany ls f =
 " }}}}
 
 " def map_filter {{{{
@@ -432,7 +436,7 @@ endfunction
 function! s:map_with_index_prime(inc, funexp, acc, ele)
   let [l:l, l:i] = a:acc
   let l:next = call(a:funexp, [a:ele, l:i])
-  return [add(l:l, l:next), l:i + a:inc] 
+  return [add(l:l, l:next), l:i + a:inc]
 endfunction
 function! lab42#fn#map_with_index(list, funexp, ...)
   let l:start = 0
@@ -486,7 +490,7 @@ endfunction " }}}}
 " f' inc [l, i] x = [l ++ x, i+inc]
 function! s:with_index_prime(inc, acc, ele)
   let [l:l, l:i] = a:acc
-  return [add(l:l, [a:ele, l:i]), l:i + a:inc] 
+  return [add(l:l, [a:ele, l:i]), l:i + a:inc]
 endfunction
 function! lab42#fn#with_index(list,...)
   let l:start = 0
@@ -528,7 +532,7 @@ endfunction
 " }}}
 "----------------------------------------------------------------------------
 "  Function Composition {{{
-function! s:compose(funs, ...)
+function! s:compose(funs, ...) " {{{{
   let l:args = call(a:funs[0], copy(a:000))
   for l:Fun in a:funs[1:-1]
     let l:args = call(l:Fun, [l:args])
@@ -538,4 +542,15 @@ endfunction
 function! lab42#fn#compose(...)
   return function('s:compose', [a:000])
 endfunction
+
+function! s:concat_fns(funs, ...) " {{{{
+  let l:result = []
+  for l:Fn in a:funs
+    call add(l:result, call(l:Fn, a:000))
+  endfor
+  return l:result
+endfunction
+function! lab42#fn#concat_fns(...)
+  return function('s:concat_fns', [a:000])
+endfunction " }}}}
 "  }}}
