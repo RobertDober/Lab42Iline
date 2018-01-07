@@ -497,6 +497,35 @@ function! lab42#fn#map_with_index1(list, funexp, ...)
 endfunction
 " }}}}
 
+" def max_by list f {{{{
+" foldl (tail list) (head list) (partial f' f) where
+" f' f acc ele = if (f ele) > (f acc) then ele else acc
+function! s:max_by_prime(fun, acc, ele) " {{{{{
+  if call(a:fun, [a:ele]) > call(a:fun, [a:acc])
+    return a:ele
+  else
+    return a:acc
+  endif
+endfunction " }}}}}
+function! lab42#fn#max_by(list, fun)
+  return lab42#fn#foldl(a:list[1:-1], a:list[0], function('s:max_by_prime', [a:fun]))
+endfunction " }}}}
+
+" def max_by_and_apply list f {{{{
+" foldl (tail list) (f (head list)) (partial f' f) where
+" f' f acc ele = if (f ele) > acc then (f ele) else acc
+function! s:max_by_and_apply_prime(fun, acc, ele) " {{{{{
+  let l:applied = call(a:fun, [a:ele])
+  if l:applied > a:acc
+    return l:applied
+  else
+    return a:acc
+  endif
+endfunction " }}}}}
+function! lab42#fn#max_by_and_apply(list, fun)
+  return lab42#fn#foldl(a:list[1:-1], call(a:fun, a:list[0:0]), function('s:max_by_and_apply_prime', [a:fun]))
+endfunction " }}}}
+
 " def scan {{{{
 function! lab42#fn#scan(list, funexp, ...)
   let l:list = a:list
