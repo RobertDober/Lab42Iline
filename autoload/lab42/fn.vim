@@ -515,7 +515,7 @@ endfunction " }}}}
 " foldl (tail list) (f (head list)) (partial f' f) where
 " f' f acc ele = if (f ele) > acc then (f ele) else acc
 function! s:max_by_and_apply_prime(fun, acc, ele) " {{{{{
-  let l:applied = call(a:fun, [a:ele])
+  let l:applied = a:fun(a:ele)
   if l:applied > a:acc
     return l:applied
   else
@@ -523,7 +523,8 @@ function! s:max_by_and_apply_prime(fun, acc, ele) " {{{{{
   endif
 endfunction " }}}}}
 function! lab42#fn#max_by_and_apply(list, fun)
-  return lab42#fn#foldl(a:list[1:-1], call(a:fun, a:list[0:0]), function('s:max_by_and_apply_prime', [a:fun]))
+  call lab42#test#dbg(a:list)
+  return lab42#fn#foldl(a:list[1:-1], a:fun(a:list[0]), function('s:max_by_and_apply_prime', [a:fun]))
 endfunction " }}}}
 
 " def scan {{{{
