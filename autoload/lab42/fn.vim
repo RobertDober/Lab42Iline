@@ -294,6 +294,33 @@ function! lab42#fn#filter_with_index(list, funexp, ...)
   return lab42#fn#foldl_with_index(a:list, [], l:Partial, l:start, l:incr)
 endfunction
 " }}}}
+
+" def grep {{{{
+"grep l r = foldl l [] (partial f' r) where
+" f' r acc ele = if r =~ ele then acc ++ ele else acc end
+function! s:grep_prime(rgx, acc, ele) " {{{{{
+  if a:ele =~ a:rgx
+    return add(a:acc, a:ele)
+  else
+    return a:acc
+  endif
+endfunction " }}}}}
+function! lab42#fn#grep(list, rgx) " {{{{{
+  let l:Partial = function('s:grep_prime', [a:rgx])
+  return lab42#fn#foldl(a:list, [], l:Partial)
+endfunction " }}}}}
+function! s:grep_v_prime(rgx, acc, ele) " {{{{{
+  if a:ele =~ a:rgx
+    return a:acc
+  else
+    return add(a:acc, a:ele)
+  endif
+endfunction " }}}}}
+function! lab42#fn#grep_v(list, rgx) " {{{{{
+  let l:Partial = function('s:grep_v_prime', [a:rgx])
+  return lab42#fn#foldl(a:list, [], l:Partial)
+endfunction " }}}}}
+" }}}}
 "
 " def reject {{{{
 " reject l f = folfl l [] (partial f' f) where
