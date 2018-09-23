@@ -550,7 +550,6 @@ function! s:max_by_and_apply_prime(fun, acc, ele) " {{{{{
   endif
 endfunction " }}}}}
 function! lab42#fn#max_by_and_apply(list, fun)
-  call lab42#test#dbg(a:list)
   return lab42#fn#foldl(a:list[1:-1], a:fun(a:list[0]), function('s:max_by_and_apply_prime', [a:fun]))
 endfunction " }}}}
 
