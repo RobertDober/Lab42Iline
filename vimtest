@@ -6,6 +6,7 @@ debug=0
 doc=0
 silent=0
 filter='.*'
+vim=${vim:-nvim}
 while true
 do
     case $1 in
@@ -31,7 +32,7 @@ fi
 
 files=$(for file; do echo -n "'$file', "; done | sed 's/, $//')
 
-vim -nc ":call lab42#test#runner([$files], '$stdout', $debug, $doc, '$filter', $silent)"
+${vim} -nc ":call lab42#test#runner([$files], '$stdout', $debug, $doc, '$filter', $silent)"
 
 cat $stdout
 

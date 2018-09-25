@@ -1,5 +1,6 @@
-
-
+" Ruby Filters {{{
+command! -range -nargs=1 -complete=file RubyF :call lab42#ruby#filter(<line1>,<line2>,<q-args>) 
+" }}}
 " Struct {{{
 " Compiler Helpers {{{{
 function! s:make_metod_name(class, method)

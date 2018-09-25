@@ -39,7 +39,11 @@ function! lab42#customTypes()
   let b:file_type     = &ft
   let b:full_path     = expand("%:p")
   let b:path_segments = split(b:full_path, '/')
-  let b:base_name     = b:path_segments[-1]
+  if empty(b:path_segments)
+    let b:base_name     = "*annon*"
+  else
+    let b:base_name     = b:path_segments[-1]
+  endif
   call s:customTypeWithFt(&ft)
 endfunction
 
