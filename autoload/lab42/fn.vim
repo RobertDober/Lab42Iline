@@ -350,18 +350,30 @@ function! lab42#fn#reject_with_index(list, funexp, ...)
 endfunction
 " }}}}
 " def find {{{{
-function! s:find_prime(funexp, _acc, ele)
-  return call(a:funexp,[a:ele])
+function! s:find_wrapper(funexp, ele)
+  let l:val = call(a:funexp,[a:ele])
+  if l:val
+    return lab42#data#option(1, a:ele)
+  endif
+  return lab42#data#none()
 endfunction
-function! lab42#fn#find(list, funexp)
+function! lab42#fn#find(list, funexp, ...)
   for l:ele in a:list
     let l:val = call(a:funexp, [l:ele])
     if l:val.some()
       return l:val
     endif
   endfor
-  return lab42#data#none()
+  if a:0
+    return lab42#data#option(1, a:1)
+  else
+    return lab42#data#none()
+  endif
 endfunction
+function! lab42#fn#bare_find(list, funexp, ...) " {{{{{
+  let l:Partial = function('s:find_wrapper', [a:funexp])
+  return call('lab42#fn#find', extend([a:list, l:Partial], a:000))
+endfunction " }}}}}
 " }}}}
 
 

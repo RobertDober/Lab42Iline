@@ -21,7 +21,7 @@ endfunction
 " -------------------------------------------------------------------------------------------------------------------------
 "  Output
 " -------------------------------------------------------------------------------------------------------------------------
-function! s:document(str)
+function! s:document(str) " {{{
   if s:doc
     call add(s:messages, a:str)
   endif
@@ -62,11 +62,12 @@ endfunction
 function! lab42#test#dbg_many(...)
   return lab42#fn#map(copy(a:000), function('lab42#test#dbg', []))
 endfunction
+" }}}
 
 " -------------------------------------------------------------------------------------------------------------------------
-"  Assertions
+"  Assertions {{{
 " -------------------------------------------------------------------------------------------------------------------------
-function! lab42#test#assert_eq(expected, actual, ...)
+function! lab42#test#assert_eq(expected, actual, ...) " {{{{{
   let l:msg = ''
   if a:0 > 0
     let l:msg = s:yellow(" «" . a:1 . "»")
@@ -81,9 +82,9 @@ function! lab42#test#assert_eq(expected, actual, ...)
   elseif a:expected != a:actual
     call s:addFailure(printf(' expected: %s, actual: %s%s', s:green(string(a:expected)), s:red(string(a:actual)), l:msg))
   endif
-endfunction
+endfunction " }}}}}
 
-function! lab42#test#assert_near(expected, actual, ...)
+function! lab42#test#assert_near(expected, actual, ...) " {{{{{
   let l:msg = ''
   let l:exp_delta = 0.000001
   if a:0 > 0
@@ -104,8 +105,21 @@ function! lab42#test#assert_near(expected, actual, ...)
   if l:act_delta > l:exp_delta
     call s:addFailure(printf(' expected: %s to be close to %s (delta: %s) but delta was %s %s', s:red(a:actual), s:green(a:expected), s:green(l:exp_delta), s:red(l:act_delta), l:msg))
   endif
-endfunction
-function! lab42#test#assert_false(expression, ...)
+endfunction " }}}}}
+function! lab42#test#buffer_lines(expected, start_line, ...) " {{{{{
+  if a:0
+    let l:end_line = a:1
+  else
+    let l:end_line = a:start_line
+  endif
+  if type(a:expected) == 1
+    let l:expected = [a:expected]
+  else
+    let l:expected = a:expected
+  endif
+  call lab42#test#assert_eq(l:expected, getline(a:start_line, l:end_line))
+endfunction " }}}}}
+function! lab42#test#assert_false(expression, ...) " {{{{{
   let l:msg = ''
   if a:0 > 0
     let l:msg = s:yellow(" «" . a:1 . "»")
@@ -116,9 +130,8 @@ function! lab42#test#assert_false(expression, ...)
   if a:expression
     call s:addFailure(printf(' expected %s to be false, but was not%s', s:red(string(a:expression)), l:msg))
   endif
-endfunction
-
-function! lab42#test#assert_throws(funexp, rgx, ...)
+endfunction " }}}}}
+function! lab42#test#assert_throws(funexp, rgx, ...) " {{{{{
   let l:msg = ''
   if a:0 > 0
     let l:msg = s:yellow(" «" . a:1 . "»")
@@ -135,8 +148,8 @@ function! lab42#test#assert_throws(funexp, rgx, ...)
     endif
   endtry
   call s:addFailure(printf( ' expected %s to throw %s, but it did not throw anything%s', s:blue(string(a:funexp)), s:green(a:rgx), l:msg))
-endfunction
-function! lab42#test#assert_true(expression, ...)
+endfunction " }}}}}
+function! lab42#test#assert_true(expression, ...) " {{{{{
   let l:msg = ''
   if a:0 > 0
     let l:msg = s:yellow(" «" . a:1 . "»")
@@ -147,7 +160,8 @@ function! lab42#test#assert_true(expression, ...)
   if !a:expression
     call s:addFailure(printf(' expected %s to be true, but was not%s', s:red(string(a:expression)), l:msg))
   endif
-endfunction
+endfunction " }}}}}
+" }}}
 " -------------------------------------------------------------------------------------------------------------------------
 "  Counts
 " -------------------------------------------------------------------------------------------------------------------------
