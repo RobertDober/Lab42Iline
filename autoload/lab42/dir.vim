@@ -8,9 +8,10 @@ function! s:carth_prod(lists) " {{{{{
   let l:result = []
   for l:ele in l:list
     for l:prod in l:prods
-      call add(l:result, insert(l:prod, l:ele))
+      call add(l:result, insert(copy(l:prod), l:ele))
     endfor
   endfor
+  return l:result
 endfunction " }}}}}
 
 function! s:carth_prod2(lists) " {{{{{
