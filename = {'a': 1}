@@ -139,15 +139,11 @@ endfunction
 " }}}}
 " }}}
 " Dir {{{{
-function! lab42#fn#add_pair_to_dir(dir, pair) " {{{{{
+function! lab42#fn#add_pair_to_dir_fn(dir, pair) " {{{{{
   let [l:key, l:val] = a:pair
-  return extend(copy(a:dir), {l:key: l:val})
+
 endfunction " }}}}}
-function! lab42#fn#add_pair_to_dir_fn() 
-  return funcref('lab42#fn#add_pair_to_dir')
-endfunction
 " }}}}
-"
 " Lists {{{{
 function! lab42#fn#islist(maybelist)
   return type(a:maybelist) == 3
