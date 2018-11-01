@@ -43,24 +43,21 @@ endfunction " }}}}}
 " }}}}
 
 " {{{{ ZIP
-function! s:take_n_th_of_all(dir, keys, idx) " {{{{{
-  let l:result = {}
+fun s:add_nth_value_of_key(dir, idx, result, key)
   try
-    for l:key in a:keys
-      call extend(l:result, {l:key: a:dir[l:key][a:idx]})
-    endfor
-  finally
-    return l:result
+    call extend(a:result, {a:key: a:dir[a:key][a:idx]})
+  finally " takes care of shorter lists if not all lists have equal length
+    return a:result
   endtry
+endfunction
+
+function! s:take_nth_of_all(dir, keys, idx) " {{{{{
+  return lab42#fn#foldl(a:keys, {}, function('s:add_nth_value_of_key', [a:dir, a:idx]))
 endfunction " }}}}}
 
 function! lab42#dir#zip(dir) " {{{{{
   let l:keys   = keys(a:dir)
   let l:guide  = l:keys[0]
-  let l:result = []
-  for l:idx in range(len(a:dir[l:guide]))
-    call add(l:result, s:take_n_th_of_all(a:dir, l:keys, l:idx))
-  endfor
-  return l:result
+  return lab42#fn#map(range(len(a:dir[l:guide])), function('s:take_nth_of_all', [a:dir, l:keys]))
 endfunction " }}}}}
 " }}}}
