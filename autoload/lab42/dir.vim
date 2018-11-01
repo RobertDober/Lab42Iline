@@ -1,3 +1,4 @@
+" {{{{ CARTHESIAN
 function! s:carth_prod(lists) " {{{{{
   if len(a:lists) == 2
     return s:carth_prod2(a:lists)
@@ -39,3 +40,27 @@ function! lab42#dir#carthesian(dir,keyorder) " {{{{{
   let l:prod   = s:carth_prod(l:values)
   return lab42#fn#map(l:prod, function('s:map_with_keys', [a:keyorder]))
 endfunction " }}}}}
+" }}}}
+
+" {{{{ ZIP
+function! s:take_n_th_of_all(dir, keys, idx) " {{{{{
+  let l:result = {}
+  try
+    for l:key in a:keys
+      call extend(l:result, {l:key: a:dir[l:key][a:idx]})
+    endfor
+  finally
+    return l:result
+  endtry
+endfunction " }}}}}
+
+function! lab42#dir#zip(dir) " {{{{{
+  let l:keys   = keys(a:dir)
+  let l:guide  = l:keys[0]
+  let l:result = []
+  for l:idx in range(len(a:dir[l:guide]))
+    call add(l:result, s:take_n_th_of_all(a:dir, l:keys, l:idx))
+  endfor
+  return l:result
+endfunction " }}}}}
+" }}}}
