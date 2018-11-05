@@ -1,4 +1,5 @@
-
+" List Object {{
+" ***********
 " Methods {{{
 " =======
 " Accessors  {{{{
@@ -42,3 +43,18 @@ function! lab42#list#new(elements) " {{{{{
 endfunction " }}}}}
 " }}}}
 " }}}
+" }}
+"
+" List Functions {{
+" **************
+function! s:add_unique_elements(cache, acc, ele) " {{{{{
+  if !has_key(a:cache, a:ele)
+    call extend(a:cache, {a:ele: 1})
+    call add(a:acc, a:ele)
+  endif
+  return a:acc
+endfunction " }}}}}
+function! lab42#list#unique(list) " {{{{{
+  return lab42#fn#foldl(a:list, [], function('s:add_unique_elements', [{}]))
+endfunction " }}}}}
+" }}

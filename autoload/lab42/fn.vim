@@ -71,11 +71,17 @@ function! lab42#fn#inc(...)
   return function('s:adderImpl', [l:increment])
 endfunction
 
-function! s:multiply(rhs, lhs)
+function! lab42#fn#add(lhs, rhs)
+  return a:lhs + a:rhs
+endfunction
+function! lab42#fn#add_fn(...)
+  return funcref('lab42#fn#add', copy(a:000))
+endfunction
+function! lab42#fn#mul(rhs, lhs)
   return a:lhs * a:rhs
 endfunction
-function! lab42#fn#mult_fn(rhs)
-  return funcref('s:multiply', [a:rhs])
+function! lab42#fn#mul_fn(rhs)
+  return funcref('lab42#fn#mul', [a:rhs])
 endfunction
 function! s:subtract(lhs, rhs)
   return a:lhs - a:rhs
@@ -138,6 +144,16 @@ function! lab42#fn#matcher(with)
 endfunction
 " }}}}
 " }}}
+" Dir {{{{
+function! lab42#fn#add_pair_to_dir(dir, pair) " {{{{{
+  let [l:key, l:val] = a:pair
+  return extend(copy(a:dir), {l:key: l:val})
+endfunction " }}}}}
+function! lab42#fn#add_pair_to_dir_fn() 
+  return funcref('lab42#fn#add_pair_to_dir')
+endfunction
+" }}}}
+"
 " Lists {{{{
 function! lab42#fn#islist(maybelist)
   return type(a:maybelist) == 3
@@ -350,18 +366,30 @@ function! lab42#fn#reject_with_index(list, funexp, ...)
 endfunction
 " }}}}
 " def find {{{{
-function! s:find_prime(funexp, _acc, ele)
-  return call(a:funexp,[a:ele])
+function! s:find_wrapper(funexp, ele)
+  let l:val = call(a:funexp,[a:ele])
+  if l:val
+    return lab42#data#option(1, a:ele)
+  endif
+  return lab42#data#none()
 endfunction
-function! lab42#fn#find(list, funexp)
+function! lab42#fn#find(list, funexp, ...)
   for l:ele in a:list
     let l:val = call(a:funexp, [l:ele])
     if l:val.some()
       return l:val
     endif
   endfor
-  return lab42#data#none()
+  if a:0
+    return lab42#data#option(1, a:1)
+  else
+    return lab42#data#none()
+  endif
 endfunction
+function! lab42#fn#bare_find(list, funexp, ...) " {{{{{
+  let l:Partial = function('s:find_wrapper', [a:funexp])
+  return call('lab42#fn#find', extend([a:list, l:Partial], a:000))
+endfunction " }}}}}
 " }}}}
 
 
@@ -598,6 +626,20 @@ function! lab42#fn#zip(list, ...)
   let l:rest = copy(a:000)
   return lab42#fn#map_with_index(a:list, function('s:zip_prime', [l:rest]))
 endfunction " }}}}
+
+" def zip_map {{{{
+" zip_map f &lists =
+"    map(zip(lists), apply_f) where
+" apply_f tuple = f tuple
+" }}}}
+function! s:apply_fun(funexp, args) " {{{{{
+  return call(a:funexp, a:args)
+endfunction " }}}}}
+function! lab42#fn#zip_map(funexp, ...) " {{{{{
+  let l:rest = copy(a:000)
+  let l:zipped = call(function('lab42#fn#zip', l:rest), [])
+  return lab42#fn#map(l:zipped, function('s:apply_fun', [a:funexp]))
+endfunction " }}}}}
 
 " def zip_with {{{{
 " zip_with l f = map l (partial f' f) where
