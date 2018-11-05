@@ -71,11 +71,17 @@ function! lab42#fn#inc(...)
   return function('s:adderImpl', [l:increment])
 endfunction
 
-function! s:multiply(rhs, lhs)
+function! lab42#fn#add(lhs, rhs)
+  return a:lhs + a:rhs
+endfunction
+function! lab42#fn#add_fn(...)
+  return funcref('lab42#fn#add', copy(a:000))
+endfunction
+function! lab42#fn#mul(rhs, lhs)
   return a:lhs * a:rhs
 endfunction
-function! lab42#fn#mult_fn(rhs)
-  return funcref('s:multiply', [a:rhs])
+function! lab42#fn#mul_fn(rhs)
+  return funcref('lab42#fn#mul', [a:rhs])
 endfunction
 function! s:subtract(lhs, rhs)
   return a:lhs - a:rhs
