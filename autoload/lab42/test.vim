@@ -229,20 +229,24 @@ function! lab42#test#use_buffer(name) " {{{{{
 endfunction " }}}}}
 " }}}}
 function! lab42#test#from_file(file)
-  exec 'edit! ' . a:file
-  let l:tests = s:parseTests()
-  let s:currfile = a:file
+  try
+    exec 'edit! ' . a:file
+    let l:tests = s:parseTests()
+    let s:currfile = a:file
 
-  exec "source %"
-  call s:document('Executing suite ' . s:blue(s:currfile))
-  for l:test in l:tests
-    let s:testcount += 1
-    let s:localassertcount = 0
-    let s:currtest = substitute(l:test, '()\s*".*$', '', '')
-    call s:wrap(l:test)
-  endfor
+    exec "source %"
+    call s:document('Executing suite ' . s:blue(s:currfile))
+    for l:test in l:tests
+      let s:testcount += 1
+      let s:localassertcount = 0
+      let s:currtest = substitute(l:test, '()\s*".*$', '', '')
+      call s:wrap(l:test)
+    endfor
+  finally
+  endtry
 endfunction
 
+"                                          debug, doc, filter, silent
 function! lab42#test#runner(files, stdout, ...)
   let l:debug  = 0
   let s:doc    = 0
@@ -269,7 +273,7 @@ function! lab42#test#runner(files, stdout, ...)
   endfor
   call s:reportResults()
   if !l:debug
-    quit!
+    qa!
   else
     tabnew
     call setline("$", "Messages:")
