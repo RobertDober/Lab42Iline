@@ -119,6 +119,13 @@ function! lab42#test#buffer_lines(expected, start_line, ...) " {{{{{
   endif
   call lab42#test#assert_eq(l:expected, getline(a:start_line, l:end_line))
 endfunction " }}}}}
+function! lab42#test#assert_command(command, line, expected_buffer) " {{{{{
+  exec 'e!'
+  call cursor(a:line, 999)
+  exec a:command
+  call lab42#test#buffer_lines(a:expected_buffer, a:line, a:line + len(a:expected_buffer)-1)
+endfunction " }}}}}
+
 function! lab42#test#assert_false(expression, ...) " {{{{{
   let l:msg = ''
   if a:0 > 0
@@ -171,7 +178,7 @@ function! s:increment_assertions()
 endfunction
 
 " -------------------------------------------------------------------------------------------------------------------------
-"  Test Management
+"  Test Management {{{
 " -------------------------------------------------------------------------------------------------------------------------
 function! s:addFailure(msg)
   let s:errcount += 1
@@ -187,6 +194,10 @@ function! s:filterTest(_,testname)
   return a:testname =~ '^' . s:filter . '$'
 endfunction
 
+" function! s:parseSetup() " {{{{{ let l:testLines = filter(getline(1, '$'), 'v:val =~ "^\s*function! Setup"')
+"   let l:filtered  = map(l:testLines, function('s:cleanupTestFunction'))
+"   return l:filtered
+" endfunction " }}}}}
 function! s:parseTests()
   let l:testLines = filter(getline(1, '$'), 'v:val =~ "^\s*function! Test"')
   let l:filtered  = map(l:testLines, function('s:cleanupTestFunction'))
@@ -210,6 +221,10 @@ function! s:wrap(test)
     exec 'edit! ' . s:buffer
   endif
   try
+    call Setup()
+  catch /.*/
+  endtry
+  try
     exec 'call ' . a:test . '()'
   catch /.*/
     call s:document('   ' .  s:blue(s:currtest) . ' ' . s:red('✗'))
@@ -232,6 +247,7 @@ function! lab42#test#from_file(file)
   try
     exec 'edit! ' . a:file
     let l:tests = s:parseTests()
+    " let l:setup = s:parseSetup()
     let s:currfile = a:file
 
     exec "source %"
@@ -282,3 +298,4 @@ function! lab42#test#runner(files, stdout, ...)
     call map(s:failures, 'append("$", v:val)')
   endif
 endfunction
+" }}}
