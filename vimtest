@@ -7,7 +7,7 @@ doc=0
 silent=0
 filter='.*'
 
-vim=${vim:-vim}
+vim=${vim:-nvim}
 while true
 do
     case $1 in

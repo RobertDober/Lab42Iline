@@ -58,3 +58,46 @@ function! lab42#list#unique(list) " {{{{{
   return lab42#fn#foldl(a:list, [], function('s:add_unique_elements', [{}]))
 endfunction " }}}}}
 " }}
+"
+" List Tools {{
+" **********
+function! s:splitter_alone(fun, acc, line) " {{{{{
+  if call(a:fun, [a:line])
+    return extend(a:acc, [[a:line], []])
+  else
+    call add(a:acc[-1], a:line)
+    return a:acc
+  endif
+endfunction " }}}}}
+function! s:splitter_exclude(fun, acc, line) " {{{{{
+  if call(a:fun, [a:line])
+    return add(a:acc, [])
+  else
+    call add(a:acc[-1], a:line)
+    return a:acc
+  endif
+endfunction " }}}}}
+function! s:splitter_part(fun, acc, line) " {{{{{
+  if call(a:fun, [a:line])
+    call add(a:acc, [])
+  endif
+  call add(a:acc[-1], a:line)
+  return a:acc
+endfunction " }}}}}
+function! s:split_impl(list, fun, split) " {{{{{
+  if a:split == 0
+    return lab42#fn#foldl(a:list, [[]], function('s:splitter_exclude', [a:fun]))
+  elseif a:split == 1
+    return lab42#fn#foldl(a:list, [[]], function('s:splitter_part', [a:fun]))
+  else
+    return lab42#fn#foldl(a:list, [[]], function('s:splitter_alone', [a:fun]))
+  endif
+endfunction " }}}}}
+function! lab42#list#split(list, fun, ...) " {{{{{
+  let l:split = 0
+  if a:0 > 0
+    let l:split = a:1
+  endif
+  return s:split_impl(a:list, a:fun, l:split)
+endfunction " }}}}}
+" }}
