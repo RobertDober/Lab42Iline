@@ -57,8 +57,13 @@ function! lab42#string#lrotate(str, sep) " {{{{{
     return a:str
   endif
 endfunction " }}}}}
-function! lab42#string#rrotate(str, sep) " {{{{{
-  let l:parts = lab42#string#split(a:str, a:sep)
+function! lab42#string#rrotate(str, ...) " {{{{{
+  if a:0
+    let l:sep = a:1
+  else
+    let l:sep = s:find_sep(a:str)
+  endif
+  let l:parts = lab42#string#split(a:str, l:sep)
   if len(l:parts) > 2
     let l:out   = insert(insert(l:parts[0:-3], l:parts[-2]), l:parts[-1]) 
     return join(l:out, '')
