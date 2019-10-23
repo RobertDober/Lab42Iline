@@ -215,7 +215,7 @@ function! s:initTests()
   let s:messages    = []
 endfunction
 
-function! s:wrap(test)
+function! s:_wrap(test)
   let l:oldcount = s:errcount
   if !empty(s:buffer)
     exec 'edit! ' . s:buffer
@@ -256,7 +256,7 @@ function! lab42#test#from_file(file)
       let s:testcount += 1
       let s:localassertcount = 0
       let s:currtest = substitute(l:test, '()\s*".*$', '', '')
-      call s:wrap(l:test)
+      call s:_wrap(l:test)
     endfor
   finally
   endtry
