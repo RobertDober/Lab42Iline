@@ -198,24 +198,6 @@ function! lab42#fn#substr_fn(lc, rc, ...)
   return function('lab42#fn#substr', [a:lc, a:rc, l:padding])
 endfunction
 " }}}}
-" Sets {{{
-function! s:add_element(dict, ele) " {{{{{
-  let a:dict[a:ele] = 1
-  return a:dict
-endfunction " }}}}}
-function! s:is_member(dict, ele) " {{{{{
-  return has_key(a:dict, a:ele)
-endfunction " }}}}}
-function! lab42#fn#add_element_fn(dict) " {{{{{
-  return function('s:add_element', [a:dict])
-endfunction " }}}}}
-function! lab42#fn#is_member_fn(dict) " {{{{{
-  return function('s:is_member', [a:dict])
-endfunction " }}}}}
-function! lab42#fn#set_from_list(list) " {{{{{
-  return lab42#fn#foldl(a:list, {}, funcref('s:add_element'))
-endfunction " }}}}}
-" }}}
 " Helpers {{{
 " Functional Helpers {{{{
 function! lab42#fn#isfn(maybefn)

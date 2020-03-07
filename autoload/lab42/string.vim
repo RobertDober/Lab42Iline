@@ -76,7 +76,7 @@ endfunction " }}}}}
 function! lab42#string#tokens(line, tokens) " {{{{{
   let l:graphemes = split(a:line, '\s*')
   let l:tokens    = split(a:tokens, '\s*')
-  let l:set       = lab42#fn#set_from_list(l:tokens) 
-  return lab42#fn#filter(l:graphemes, lab42#fn#is_member_fn(l:set)) 
+  let l:set       = lab42#set#set_from_list(l:tokens) 
+  return lab42#fn#filter(l:graphemes, lab42#set#is_member_fn(l:set)) 
 endfunction " }}}}}
 " }}}}
